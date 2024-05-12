@@ -1,9 +1,13 @@
-import { MongoClient, ServerApiVersion } from "mongodb";
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+import { MongoClient, ServerApiVersion } from 'mongodb';
 import fs from 'fs';
-import path from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const certificateFileName = 'X509-cert-345565752601683202.pem';
-const pathToCertificate = path.join(__dirname, '..', certificateFileName);
+const pathToCertificate = join(__dirname, '..', certificateFileName);
 
 let client;
 
