@@ -1,11 +1,15 @@
 import { MongoClient, ServerApiVersion } from "mongodb";
+import fs from 'fs';
+import path from 'path';
 
-const credentials = '../X509-cert-345565752601683202.pem';
+const certificateFileName = 'X509-cert-345565752601683202.pem';
+const pathToCertificate = path.join(__dirname, '..', certificateFileName);
 
 let client;
 
 export const connectToMongoDb = () => {
 	const uri = process.env.DB_URI;
+	const credentials = fs.readFileSync(pathToCertificate);
 	client = new MongoClient(uri, {
 		tlsCertificateKeyFile: credentials,
 		serverApi: ServerApiVersion.v1
