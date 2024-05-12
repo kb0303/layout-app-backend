@@ -1,7 +1,6 @@
 import { MongoClient, ServerApiVersion } from "mongodb";
-import pathToCertificate from '../X509-cert-345565752601683202.pem'
 
-const credentials = pathToCertificate;
+const credentials = '../X509-cert-345565752601683202.pem';
 
 let client;
 
