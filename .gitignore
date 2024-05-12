@@ -6,7 +6,5 @@
 .pnp.js
 
 
-uploads/*
-
 # misc
 *.env
