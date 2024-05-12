@@ -1,17 +1,26 @@
-import { MongoClient } from "mongodb";
+import { MongoClient, ServerApiVersion } from "mongodb";
+import pathToCertificate from '../X509-cert-345565752601683202.pem'
+
+const credentials = pathToCertificate;
 
 let client;
+
 export const connectToMongoDb = () => {
-	MongoClient.connect(process.env.DB_URI)
-		.then(clientInstance => {
-			client = clientInstance;
-			console.log("Connected to mongoDb");
+	const uri = process.env.DB_URI;
+	client = new MongoClient(uri, {
+		tlsCertificateKeyFile: credentials,
+		serverApi: ServerApiVersion.v1
+	});
+
+	client.connect()
+		.then(() => {
+			console.log("Connected to MongoDB");
 		})
 		.catch(err => {
-			console.log(err);
-		})
-}
+			console.log("Error connecting to MongoDB:", err);
+		});
+};
 
 export const getDb = () => {
 	return client.db("componentsData");
-}
+};
