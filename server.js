@@ -20,9 +20,9 @@ server.get('/', (req, res) => {
     res.send('Welcome to Draggy');
 });
 
-const startServer = async () => {
+const startServer = () => {
     try {
-        await connectToMongoDb(); // Wait for MongoDB connection to establish
+    	connectToMongoDb();
         const port = process.env.PORT || 8080;
         server.listen(port, () => {
             console.log(`Server is listening on port: ${port}`);
