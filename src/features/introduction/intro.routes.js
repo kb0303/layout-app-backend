@@ -20,4 +20,9 @@ IntroRouter.put('/:id', upload.single('imageUrl'), (req, res) => {
 	introController.update(req, res)
 });
 
+// Route for resetting the database
+IntroRouter.delete('/reset', (req, res) => {
+	introController.reset(req, res);
+});
+
 export default IntroRouter;

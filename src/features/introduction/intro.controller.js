@@ -59,4 +59,16 @@ export default class IntroController {
 			res.status(500).send('Something went wrong in database');
 		}
 	}
+
+
+	async reset(req, res) {
+		try {
+			// Call the repository's reset method
+			const deletedCount = await this.introRepository.reset();
+			res.status(200).send(`${deletedCount} documents deleted successfully.`);
+		} catch (error) {
+			console.error('Error resetting database:', error);
+			res.status(500).send('Internal server error');
+		}
+	}
 }

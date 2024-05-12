@@ -57,4 +57,17 @@ export default class IntroRepository {
 		}
 	}
 
+
+	async reset() {
+		try {
+			const db = getDb();
+			const collection = db.collection(this.collection);
+			const result = await collection.deleteMany({});
+			return result.deletedCount; // Returns the count of deleted documents
+		} catch (error) {
+			console.error('Error resetting database:', error);
+			throw error;
+		}
+	}
+
 }
