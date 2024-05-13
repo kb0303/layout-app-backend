@@ -25,11 +25,12 @@ export default class IntroController {
             const imageUrl = req.file.filename;
 
             const startTime = new Date(); // Start time
-            const newContent = await this.introRepository.add(new IntroModel(name, age, place, imageUrl));
+			const newContent = new IntroModel(name, age, place, imageUrl)
+            const result = await this.introRepository.add(newContent);
             const endTime = new Date(); // End time
             const executionTime = endTime - startTime; // Time taken in milliseconds
 
-            res.status(201).json({ newContent, executionTime });
+            res.status(201).json({ result, executionTime });
         } catch (error) {
             console.error('Error adding content:', error);
             res.status(500).send("Something went wrong in database");
