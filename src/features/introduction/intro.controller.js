@@ -27,7 +27,7 @@ export default class IntroController {
 
 			// adding content in the database
 			await this.introRepository.add(newContent);
-			res.status(201).send(newContent);
+			res.status(201).json(newContent);
 
 		} catch (error) {
 			res.status(500).send("Something went wrong in database")
