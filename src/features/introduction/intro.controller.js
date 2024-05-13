@@ -28,9 +28,10 @@ export default class IntroController {
 			// adding content in the database and calculating overall time for this process(from getting the database to executing the method)
 			const startTime = new Date(); // Start time
 			await this.introRepository.add(newContent);
-            const endTime = new Date(); // End time
-            const executionTime = endTime - startTime; // Time taken in milliseconds
+			const endTime = new Date(); // End time
+			const executionTime = endTime - startTime; // Time taken in milliseconds
 			res.status(201).send(newContent);
+			console.log(executionTime)
 			return executionTime;
 
 		} catch (error) {
@@ -47,17 +48,22 @@ export default class IntroController {
 
 			// Checking if file exists
 			if (req.file) {
-				imageUrl = req.file.filename; 
+				imageUrl = req.file.filename;
 			}
 
-			// Calling repository update method
+			// Calling repository update method and calculating overall time for this process
+			const startTime = new Date(); // Start time
 			const updatedContent = await this.introRepository.update(name, age, place, imageUrl, id);
+			const endTime = new Date(); // End time
+			const executionTime = endTime - startTime; // Time taken in milliseconds
 
 			if (!updatedContent) {
 				return res.status(404).send('Content not found');
 			}
 
-			res.json(updatedContent);
+			res.status(200).send(updatedContent);
+			console.log(executionTime)
+			return executionTime;
 		} catch (error) {
 			console.error(error);
 			res.status(500).send('Something went wrong in database');
@@ -68,8 +74,16 @@ export default class IntroController {
 	async reset(req, res) {
 		try {
 			// Call the repository's reset method
+			const startTime = new Date(); // Start time
 			const deletedCount = await this.introRepository.reset();
+			const endTime = new Date(); // End time
+
+			const executionTime = endTime - startTime; // Time taken in milliseconds
+
 			res.status(200).send(`${deletedCount} documents deleted successfully.`);
+			console.log(executionTime);
+			return executionTime;
+
 		} catch (error) {
 			console.error('Error resetting database:', error);
 			res.status(500).send('Internal server error');
