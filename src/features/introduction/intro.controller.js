@@ -1,92 +1,80 @@
-import IntroModel from "./intro.model.js";
 import IntroRepository from "./intro.repository.js";
+import IntroModel from "./intro.model.js";
 
 export default class IntroController {
-	constructor() {
-		this.introRepository = new IntroRepository()
-	}
+    constructor() {
+        this.introRepository = new IntroRepository()
+    }
 
-	async getAll(req, res) {
-		try {
-			const startTime = new Date(); // Start time
-			// Fetch all data from the repository
-			const data = await this.introRepository.getAll();
-			const endTime = new Date(); // End time
-			const executionTime = endTime - startTime; // Time taken in milliseconds
-			console.log('Total time taken to process getAll request:', executionTime, 'milliseconds');
+    async getAll(req, res) {
+        try {
+            const startTime = new Date(); // Start time
+            const data = await this.introRepository.getAll();
+            const endTime = new Date(); // End time
+            const executionTime = endTime - startTime; // Time taken in milliseconds
+            res.json({ data, executionTime });
+        } catch (error) {
+            console.error('Error fetching all data:', error);
+            res.status(500).send('Internal server error');
+        }
+    }
 
-			res.json(data);
-		} catch (error) {
-			console.error('Error fetching all data:', error);
-			res.status(500).send('Internal server error');
-		}
-	}
+    async add(req, res) {
+        try {
+            const { name, age, place } = req.body;
+            const imageUrl = req.file.filename;
 
-	async add(req, res) {
-		try {
-			const startTime = new Date(); // Start time
-			const { name, age, place } = req.body;
-			const imageUrl = req.file.filename
+            const startTime = new Date(); // Start time
+            const newContent = await this.introRepository.add(new IntroModel(name, age, place, imageUrl));
+            const endTime = new Date(); // End time
+            const executionTime = endTime - startTime; // Time taken in milliseconds
 
-			// creating new content instance
-			const newContent = new IntroModel(name, age, place, imageUrl)
+            res.status(201).json({ newContent, executionTime });
+        } catch (error) {
+            console.error('Error adding content:', error);
+            res.status(500).send("Something went wrong in database");
+        }
+    }
 
-			// adding content in the database
-			await this.introRepository.add(newContent);
-			const endTime = new Date(); // End time
-			const executionTime = endTime - startTime; // Time taken in milliseconds
-			console.log('Total time taken to process add request:', executionTime, 'milliseconds');
+    async update(req, res) {
+        try {
+            const { name, age, place } = req.body;
+            const id = req.params.id;
 
-			res.status(201).send(newContent);
+            let imageUrl;
 
-		} catch (error) {
-			res.status(500).send("Something went wrong in database")
-		}
-	}
+            // Checking if file exists
+            if (req.file) {
+                imageUrl = req.file.filename; 
+            }
 
-	async update(req, res) {
-		try {
-			const startTime = new Date(); // Start time
-			const { name, age, place } = req.body;
-			const id = req.params.id;
+            const startTime = new Date(); // Start time
+            const updatedContent = await this.introRepository.update(name, age, place, imageUrl, id);
+            const endTime = new Date(); // End time
+            const executionTime = endTime - startTime; // Time taken in milliseconds
 
-			let imageUrl;
+            if (!updatedContent) {
+                return res.status(404).send('Content not found');
+            }
 
-			// Checking if file exists
-			if (req.file) {
-				imageUrl = req.file.filename;
-			}
+            res.json({ updatedContent, executionTime });
+        } catch (error) {
+            console.error('Error updating content:', error);
+            res.status(500).send('Something went wrong in database');
+        }
+    }
 
-			// Calling repository update method
-			const updatedContent = await this.introRepository.update(name, age, place, imageUrl, id);
-			const endTime = new Date(); // End time
-			const executionTime = endTime - startTime; // Time taken in milliseconds
-			console.log('Total time taken to process update request:', executionTime, 'milliseconds');
+    async reset(req, res) {
+        try {
+            const startTime = new Date(); // Start time
+            const deletedCount = await this.introRepository.reset();
+            const endTime = new Date(); // End time
+            const executionTime = endTime - startTime; // Time taken in milliseconds
 
-			if (!updatedContent) {
-				return res.status(404).send('Content not found');
-			}
-
-			res.json(updatedContent);
-		} catch (error) {
-			console.error(error);
-			res.status(500).send('Something went wrong in database');
-		}
-	}
-
-	async reset(req, res) {
-		try {
-			const startTime = new Date(); // Start time
-			// Call the repository's reset method
-			const deletedCount = await this.introRepository.reset();
-			const endTime = new Date(); // End time
-			const executionTime = endTime - startTime; // Time taken in milliseconds
-			console.log('Total time taken to process reset request:', executionTime, 'milliseconds');
-
-			res.status(200).send(`${deletedCount} documents deleted successfully.`);
-		} catch (error) {
-			console.error('Error resetting database:', error);
-			res.status(500).send('Internal server error');
-		}
-	}
+            res.status(200).json({ executionTime, deletedCount });
+        } catch (error) {
+            console.error('Error resetting database:', error);
+            res.status(500).send('Internal server error');
+        }
+    }
 }
