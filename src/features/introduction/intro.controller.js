@@ -30,10 +30,7 @@ export default class IntroController {
 			await this.introRepository.add(newContent);
 			const endTime = new Date(); // End time
 			const executionTime = endTime - startTime; // Time taken in milliseconds
-			res.status(201).send(newContent);
-			console.log(executionTime)
-			return executionTime;
-
+			res.status(201).send({ content: newContent, executionTime });
 		} catch (error) {
 			res.status(500).send("Something went wrong in database")
 		}
@@ -61,9 +58,7 @@ export default class IntroController {
 				return res.status(404).send('Content not found');
 			}
 
-			res.status(200).send(updatedContent);
-			console.log(executionTime)
-			return executionTime;
+			res.status(200).send({ content: updatedContent, executionTime });
 		} catch (error) {
 			console.error(error);
 			res.status(500).send('Something went wrong in database');
@@ -80,10 +75,7 @@ export default class IntroController {
 
 			const executionTime = endTime - startTime; // Time taken in milliseconds
 
-			res.status(200).send(`${deletedCount} documents deleted successfully.`);
-			console.log(executionTime);
-			return executionTime;
-
+			res.status(200).send({ message: `${deletedCount} documents deleted successfully.`, executionTime });
 		} catch (error) {
 			console.error('Error resetting database:', error);
 			res.status(500).send('Internal server error');
